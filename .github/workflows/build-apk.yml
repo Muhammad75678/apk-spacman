@@ -1,0 +1,32 @@
+name: Build APK with Bubblewrap
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Bubblewrap
+      run: npm install -g @bubblewrap/cli
+
+    - name: Init and Build APK
+      run: |
+        npx bubblewrap init -m ./manifest.json --directory .
+        npx bubblewrap build
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: spaceman-apk
+        path: "**/*.apk"
